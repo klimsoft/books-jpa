@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
@@ -29,10 +30,29 @@ public class BooksJpaApplication implements CommandLineRunner {
 		book = new Book( "Dziady", "Mickiewicz", 2021);
 		entityManager.persist(book);
 
+		long dziadyId = book.getId();
+
+		entityManager.merge(book);
+
+//	entityManager.createNativeQuery("UPDATE book SET version = 10 WHERE id = :id").setParameter("id", dziadyId).executeUpdate();
+
+		try {
+			entityManager.merge(book);
+		} catch (Exception e) {
+			book = entityManager.find(Book.class, dziadyId);
+			entityManager.merge(book);
+		}
+
+
+
+
+		book.setTitle("Dziady III");
+		entityManager.merge(book);
+
 		List<Book> results = entityManager.createNativeQuery("select * from Book", Book.class).getResultList();
 
 		for (Book bookFromList: results) {
-			System.out.println(book.toString());
+			System.out.println(bookFromList.toString());
 		}
 
 	}
