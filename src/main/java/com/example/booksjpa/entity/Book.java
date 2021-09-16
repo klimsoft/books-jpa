@@ -6,13 +6,17 @@ import javax.persistence.*;
 @Entity
 public class Book {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO )
+    @GeneratedValue(strategy = GenerationType.IDENTITY )
     long id;
     String title;
     String author;
     int publisded;
     @Version
     long version;
+
+    public Book(){
+
+    }
 
     public Book( String title, String author, int publisded) {
         this.title = title;
