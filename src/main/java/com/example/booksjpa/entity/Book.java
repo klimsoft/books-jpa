@@ -2,26 +2,31 @@ package com.example.booksjpa.entity;
 
 import javax.annotation.processing.Generated;
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY )
-    long id;
+    Long id;
+
     String title;
-    String author;
-    int publisded;
+    int yearOfPublication;
+
     @Version
     long version;
 
-    public Book(){
+    @ManyToMany(mappedBy = "books")
+    Set<Author> authors = new HashSet<>();
 
+    public Book(){
     }
 
-    public Book( String title, String author, int publisded) {
+    public Book(String title, int yearOfPublication) {
         this.title = title;
-        this.author = author;
-        this.publisded = publisded;
+        this.yearOfPublication = yearOfPublication;
     }
 
     @Override
@@ -29,48 +34,43 @@ public class Book {
         return "Book{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
-                ", author='" + author + '\'' +
-                ", publisded=" + publisded +
+                ", yearOfPublication=" + yearOfPublication +
+                ", version=" + version +
+                ", authors=" + authors +
                 '}';
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getTitle() {
         return title;
     }
 
+    public int getYearOfPublication() {
+        return yearOfPublication;
+    }
+
+    public Set<Author> getAuthors() {
+        return authors;
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }
 
-    public String getAuthor() {
-        return author;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Book book = (Book) o;
+        return yearOfPublication == book.yearOfPublication &&
+                Objects.equals(title, book.title);
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public int getPublisded() {
-        return publisded;
-    }
-
-    public void setPublisded(int publisded) {
-        this.publisded = publisded;
-    }
-
-    public long getVersion() {
-        return version;
-    }
-
-    public void setVersion(long version) {
-        this.version = version;
+    @Override
+    public int hashCode() {
+        return Objects.hash(title, yearOfPublication);
     }
 }
